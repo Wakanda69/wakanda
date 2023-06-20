@@ -16,10 +16,10 @@ URL = "https://venus2.wis.ntu.edu.sg/ADFSSSO2/User/Login.aspx?app=https://wis.nt
 chrome_driver_path = "C:\PythonDev\Selenium\chromedriver.exe"
 
 ### Step 2 : Enter Username here ###
-user_name = "c210075"
+user_name = ""
 
 ### Step 3 : Enter Password here ###
-password = "Jy@2015097"
+password = ""
 
 ### Click Path ###
 badminton_path = '//*[@id="top"]/div/section[2]/div/div/p/table/tbody/tr/td[2]/form/ul/li[4]/table[2]/tbody/tr[1]/td/input'
