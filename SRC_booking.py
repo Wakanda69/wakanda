@@ -4,24 +4,26 @@ from selenium.webdriver.common.by import By
 import time
 import _thread as thread
 
-
 x = datetime.today()
 year = x.year
 month = x.month
 day = x.day
 
-URL = "https://venus2.wis.ntu.edu.sg/ADFSSSO2/User/Login.aspx?app=https://wis.ntu.edu.sg/pls/webexe88/srce_smain_s.Notice_O"
 
-### Step 1 : Download ChromeDriver and copy path to chromedriver.exe here ###
-chrome_driver_path = "C:\PythonDev\Selenium\chromedriver.exe"
+### Step 1 : Install selenium using the following command ###
+### pip install selenium ###
 
 ### Step 2 : Enter Username here ###
 user_name = ""
 
+
 ### Step 3 : Enter Password here ###
 password = ""
 
-### Click Path ###
+
+### Step 4 : Specify exact paths for the booking (retrieve using XPATH) ###
+URL = "https://venus2.wis.ntu.edu.sg/ADFSSSO2/User/Login.aspx?app=https://wis.ntu.edu.sg/pls/webexe88/srce_smain_s.Notice_O"
+
 badminton_path = '//*[@id="top"]/div/section[2]/div/div/p/table/tbody/tr/td[2]/form/ul/li[4]/table[2]/tbody/tr[1]/td/input'
 slot_path = '//*[@id="top"]/div/section[2]/div/div/p/table/tbody/tr/td[2]/form/table[2]/tbody/tr[84]/td[9]/input'
 
@@ -64,17 +66,19 @@ def main(hr, min, sec, mili):
     button3.click()
     print("slot booked succesfully")
 
+
+
 try:
-    # Step 4(final) : Set time of booking, usually 23:59
+    # Step 5(final) : Set time of booking, usually 23:59
+
     # thread.start_new_thread(main, (23,59,50,0000))
     # thread.start_new_thread(main, (23,59,51,0000))
     # thread.start_new_thread(main, (23,59,52,0000))
     # thread.start_new_thread(main, (23,59,53,0000))
     # thread.start_new_thread(main, (23,59,54,0000))
-    # thread.start_new_thread(main, (23,59,55,0000))
+    thread.start_new_thread(main, (x.hour, x.minute, x.second, x.microsecond))
 
     ### start time open for tuning as login expected to delay
-    thread.start_new_thread(main, (x.hour, x.minute, x.second, x.microsecond))
 
 except:
     print("Error: unable to start thread")
