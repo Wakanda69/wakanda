@@ -4,6 +4,13 @@ from selenium.webdriver.common.by import By
 import time
 import _thread as thread
 
+# to keep browser opening after execution
+from selenium.webdriver.chrome.options import Options
+chrome_options = Options()
+chrome_options.add_experimental_option("detach", True)
+
+
+
 x = datetime.today()
 year = x.year
 month = x.month
@@ -12,7 +19,7 @@ day = x.day
 
 ### Step 1 : Install selenium using the following command ###
 ### pip install selenium ###
-
+chrome_driver_path = "C:\PythonDev\Selenium\chromedriver.exe"
 
 ### Step 2 : Enter Username here ###
 user_name = ""
@@ -36,7 +43,7 @@ def main(hr, min, sec, mili):
     z = datetime(year, month, day, hr, min, sec, mili)
 
     # initialise webdriver 
-    driver = webdriver.Chrome()
+    driver = webdriver.Chrome(chrome_driver_path, chrome_options)
     driver.get(URL)
 
     # enter user name
@@ -45,6 +52,7 @@ def main(hr, min, sec, mili):
 
     button1 = driver.find_element(By.XPATH, uid_submit_path)
     button1.click()
+    time.sleep(0.1)
 
     # enter password
     pw_field = driver.find_element(By.ID, 'PW')
@@ -60,9 +68,13 @@ def main(hr, min, sec, mili):
         # time critical task to execute only when site refreshed
         if x > z:
             # accsessing the sport specific booking list
-            button3 = driver.find_element(By.XPATH, register_path)
-            button3.click()
+            # button3 = driver.find_element(By.XPATH, register_path)
+            # button3.click()
             break
+    
+    # Register Course
+    button3 = driver.find_element(By.XPATH, register_path)
+    button3.click()
 
 
 
