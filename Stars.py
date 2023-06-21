@@ -19,7 +19,7 @@ day = x.day
 
 ### Step 1 : Install selenium using the following command ###
 ### pip install selenium ###
-chrome_driver_path = "C:\PythonDev\Selenium\chromedriver.exe"
+
 
 ### Step 2 : Enter Username here ###
 user_name = ""
@@ -43,7 +43,7 @@ def main(hr, min, sec, mili):
     z = datetime(year, month, day, hr, min, sec, mili)
 
     # initialise webdriver 
-    driver = webdriver.Chrome(chrome_driver_path, chrome_options)
+    driver = webdriver.Chrome(chrome_options)
     driver.get(URL)
 
     # enter user name
