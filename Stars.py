@@ -43,7 +43,7 @@ def main(hr, min, sec, mili):
     z = datetime(year, month, day, hr, min, sec, mili)
 
     # initialise webdriver 
-    driver = webdriver.Chrome(chrome_driver_path, chrome_options)
+    driver = webdriver.Chrome(chrome_options)
     driver.get(URL)
 
     # enter user name
@@ -73,21 +73,22 @@ def main(hr, min, sec, mili):
             break
     
     # Register Course
-    button3 = driver.find_element(By.XPATH, register_path)
+    # button3 = driver.find_element(By.XPATH, register_path)
+    # button3.click()
+    button3 = driver.find_element(By.CSS_SELECTOR, 'tr td form input')
     button3.click()
 
 
 
-
 try:
-    # Step 5(final) : Set time of booking, usually 23:59
+    # Step 5(final) : Set time of registration
 
-    # thread.start_new_thread(main, (23,59,50,0000))
-    # thread.start_new_thread(main, (23,59,51,0000))
-    # thread.start_new_thread(main, (23,59,52,0000))
-    # thread.start_new_thread(main, (23,59,53,0000))
-    # thread.start_new_thread(main, (23,59,54,0000))
-    thread.start_new_thread(main, (x.hour, x.minute, x.second, x.microsecond))
+    thread.start_new_thread(main, (10,29,50,0000)) # 10:29:20:0000am today
+    thread.start_new_thread(main, (10,29,51,0000))
+    thread.start_new_thread(main, (10,29,52,0000))
+    thread.start_new_thread(main, (10,29,53,0000))
+    thread.start_new_thread(main, (10,29,54,0000))
+    # thread.start_new_thread(main, (x.hour, x.minute, x.second, x.microsecond))
 
     ### start time open for tuning as login expected to delay
 
