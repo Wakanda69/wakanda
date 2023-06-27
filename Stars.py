@@ -36,8 +36,10 @@ uid_submit_path = '//*[@id="top"]/div/section[2]/div/div/center[1]/form/table/tb
 
 pw_submit_path = '//*[@id="top"]/div/section[2]/div/div/form/center[1]/table/tbody/tr/td/table/tbody/tr[5]/td[2]/input[1]'
 
+# register_path may vary depending on the number of modules planned, recommend css_selector
 register_path = '//*[@id="top"]/div/section[2]/div/div/p/table/tbody/tr[1]/td[2]/table/tbody/tr[12]/td/form/input[1]'
 
+confirmation_path = '//*[@id="top"]/div/section[2]/div/div/input[1]'
 
 def main(hr, min, sec, mili):
     z = datetime(year, month, day, hr, min, sec, mili)
@@ -67,28 +69,28 @@ def main(hr, min, sec, mili):
 
         # time critical task to execute only when site refreshed
         if x > z:
-            # accsessing the sport specific booking list
-            # button3 = driver.find_element(By.XPATH, register_path)
-            # button3.click()
+            # click on register button using css_selector (number of modules may affect xpath)
+            button3 = driver.find_element(By.CSS_SELECTOR, 'tr td form input')
+            button3.click()
             break
     
+    time.sleep(0.2)
     # Register Course
-    # button3 = driver.find_element(By.XPATH, register_path)
-    # button3.click()
-    button3 = driver.find_element(By.CSS_SELECTOR, 'tr td form input')
-    button3.click()
+    button4 = driver.find_element(By.XPATH, confirmation_path)
+    button4.click()
+
 
 
 
 try:
     # Step 5(final) : Set time of registration
 
-    thread.start_new_thread(main, (10,29,50,0000)) # 10:29:20:0000am today
-    thread.start_new_thread(main, (10,29,51,0000))
-    thread.start_new_thread(main, (10,29,52,0000))
-    thread.start_new_thread(main, (10,29,53,0000))
-    thread.start_new_thread(main, (10,29,54,0000))
-    # thread.start_new_thread(main, (x.hour, x.minute, x.second, x.microsecond))
+    # thread.start_new_thread(main, (10,29,59,6000)) # 10:29:20:0000am today
+    # thread.start_new_thread(main, (10,29,59,7000))
+    # thread.start_new_thread(main, (10,29,59,8000))
+    # thread.start_new_thread(main, (10,29,59,9000))
+    # thread.start_new_thread(main, (10,30,00,0000))
+    thread.start_new_thread(main, (x.hour, x.minute, x.second, x.microsecond))
 
     ### start time open for tuning as login expected to delay
 
