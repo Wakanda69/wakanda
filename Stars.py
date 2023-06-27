@@ -19,7 +19,7 @@ day = x.day
 
 ### Step 1 : Install selenium using the following command ###
 ### pip install selenium ###
-chrome_driver_path = "C:\PythonDev\Selenium\chromedriver.exe"
+
 
 ### Step 2 : Enter Username here ###
 user_name = ""
