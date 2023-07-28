@@ -4,6 +4,11 @@ from selenium.webdriver.common.by import By
 import time
 import _thread as thread
 
+# to keep browser opening after execution
+from selenium.webdriver.chrome.options import Options
+chrome_options = Options()
+chrome_options.add_experimental_option("detach", True)
+
 x = datetime.today()
 year = x.year
 month = x.month
@@ -13,7 +18,7 @@ day = x.day
 ### Step 1 : Install selenium using the following command ###
 ### pip install selenium ###
 
-### Step 2 : Enter Username here ###
+### Step 2 : Enter Username here (with @student) ###
 user_name = ""
 
 
@@ -25,13 +30,14 @@ password = ""
 URL = "https://venus2.wis.ntu.edu.sg/ADFSSSO2/User/Login.aspx?app=https://wis.ntu.edu.sg/pls/webexe88/srce_smain_s.Notice_O"
 
 badminton_path = '//*[@id="top"]/div/section[2]/div/div/p/table/tbody/tr/td[2]/form/ul/li[4]/table[2]/tbody/tr[1]/td/input'
-slot_path = '//*[@id="top"]/div/section[2]/div/div/p/table/tbody/tr/td[2]/form/table[2]/tbody/tr[84]/td[9]/input'
+badminton_slot_path = '//*[@id="top"]/div/section[2]/div/div/p/table/tbody/tr/td[2]/form/table[2]/tbody/tr[8]/td[6]/input'
 
 gym_path = '//*[@id="top"]/div/section[2]/div/div/p/table/tbody/tr/td[2]/form/ul/li[4]/table[2]/tbody/tr[6]/td/input'
-gym_slot_path = '//*[@id="top"]/div/section[2]/div/div/p/table/tbody/tr/td[2]/form/table[2]/tbody/tr[262]/td[2]/input'
+gym_slot_path = '//*[@id="top"]/div/section[2]/div/div/p/table/tbody/tr/td[2]/form/table[2]/tbody/tr[10]/td[2]/input'
 
 confirmation_path = '//*[@id="top"]/div/section[2]/div/div/p/table/tbody/tr/td[2]/form/input[18]'
 
+# the slot path can be modify tr -> row, td -> col
 
 
 def main(hr, min, sec, mili):
@@ -41,9 +47,22 @@ def main(hr, min, sec, mili):
     driver = webdriver.Chrome()
     driver.get(URL)
 
-    # pass the basic authentication using src url 
-    login_URL = "https://" + user_name + ":" + password + "@" + driver.current_url[8:]
-    driver.get(login_URL)
+    # pass the basic authentication using src url (deprecated)
+    # login_URL = "https://" + user_name + ":" + password + "@" + driver.current_url[8:]
+    # driver.get(login_URL)
+
+    # new login method (updated 29/07/2023)
+    # enter user name
+    user_name_field = driver.find_element(By.ID, 'userNameInput')
+    user_name_field.send_keys(user_name)
+
+    #enter password
+    password_field = driver.find_element(By.ID, 'passwordInput')
+    password_field.send_keys(password)
+
+    #login
+    login_button = driver.find_element(By.ID, 'submitButton')
+    login_button.click()
 
     while 1:
         x = datetime.today()
