@@ -1,7 +1,10 @@
 from datetime import datetime
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-import time
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import NoSuchElementException
+import re
 import _thread as thread
 
 # to keep browser opening after execution
@@ -16,7 +19,7 @@ day = x.day
 
 
 ### Step 1 : Install selenium using the following command ###
-### pip install selenium ###
+# pip install selenium (deprecated) 
 
 ### Step 2 : Enter Username here (with @student) ###
 user_name = ""
@@ -26,20 +29,24 @@ user_name = ""
 password = ""
 
 
-### Step 4 : Specify exact paths for the booking (retrieve using XPATH) ###
+### Step 4 : Specify exact paths for the booking (retrieve using XPATH), UNCOMMENT the sports desired ###
+### The slot path can be modify tr -> row, td -> col ###
+### Badminton ###
+# booking_path = '//*[@id="top"]/div/section[2]/div/div/p/table/tbody/tr/td[2]/form/ul/li[4]/table[2]/tbody/tr[1]/td/input'
+# slot_path = '//*[@id="top"]/div/section[2]/div/div/p/table/tbody/tr/td[2]/form/table[2]/tbody/tr[8]/td[6]/input'
+
+### Gym ###
+booking_path = '//*[@id="top"]/div/section[2]/div/div/p/table/tbody/tr/td[2]/form/ul/li[4]/table[2]/tbody/tr[6]/td/input'
+slot_path = '//*[@id="top"]/div/section[2]/div/div/p/table/tbody/tr/td[2]/form/table[2]/tbody/tr[10]/td[2]/input'
+
+
+### Constants ###
 URL = "https://venus2.wis.ntu.edu.sg/ADFSSSO2/User/Login.aspx?app=https://wis.ntu.edu.sg/pls/webexe88/srce_smain_s.Notice_O"
-
-badminton_path = '//*[@id="top"]/div/section[2]/div/div/p/table/tbody/tr/td[2]/form/ul/li[4]/table[2]/tbody/tr[1]/td/input'
-badminton_slot_path = '//*[@id="top"]/div/section[2]/div/div/p/table/tbody/tr/td[2]/form/table[2]/tbody/tr[8]/td[6]/input'
-
-gym_path = '//*[@id="top"]/div/section[2]/div/div/p/table/tbody/tr/td[2]/form/ul/li[4]/table[2]/tbody/tr[6]/td/input'
-gym_slot_path = '//*[@id="top"]/div/section[2]/div/div/p/table/tbody/tr/td[2]/form/table[2]/tbody/tr[10]/td[2]/input'
-
 confirmation_path = '//*[@id="top"]/div/section[2]/div/div/p/table/tbody/tr/td[2]/form/input[18]'
+page_path = '//*[@id="top"]/div/section[2]/div/div/p/table/tbody/tr/td[2]/form'
 
-# the slot path can be modify tr -> row, td -> col
 
-
+### Main Function ###
 def main(hr, min, sec, mili):
     z = datetime(year, month, day, hr, min, sec, mili)
 
@@ -56,45 +63,89 @@ def main(hr, min, sec, mili):
     user_name_field = driver.find_element(By.ID, 'userNameInput')
     user_name_field.send_keys(user_name)
 
-    #enter password
+    # Enter password
     password_field = driver.find_element(By.ID, 'passwordInput')
     password_field.send_keys(password)
 
-    #login
+    # Login
     login_button = driver.find_element(By.ID, 'submitButton')
     login_button.click()
 
+    # Click link when time is up 
     while 1:
         x = datetime.today()
 
         # time critical task to execute only when site refreshed
         if x > z:
             # accsessing the sport specific booking list
-            button1 = driver.find_element(By.XPATH, gym_path)
+            button1 = driver.find_element(By.XPATH, booking_path)
             button1.click()
             break
+    
+    ### Determine whether page is loaded
+    # set a timeout value
+    wait_page = WebDriverWait(driver, 10)
+    # set attempt limit for alternative slots 
+    attempt = 0 
+    max_attempts = 10
+    # find index value using regular expression (RE)
+    match = re.search(r'/tr\[(\d+)\]', slot_path)
+    if match: 
+        index = int(match.group(1))
+    else: 
+        print('Index not found in Slot Path')
+        exit()
+    attempt_path = slot_path
 
-    time.sleep(1.5)
-    # selecting the slot
-    button2 = driver.find_element(By.XPATH, gym_slot_path)
-    button2.click()
+    try:
+        # wait for document.readyState to be 'complete'
+        wait_page.until(EC.presence_of_element_located((By.XPATH, page_path)))
 
-    time.sleep(0.5)
-    # confirming slot
-    button3 = driver.find_element(By.XPATH, confirmation_path)
-    button3.click()
-    print("slot booked succesfully")
+        while attempt < max_attempts:
+            try: 
+                # throw exception if slot not available
+                button2 = driver.find_element(By.XPATH, attempt_path)
+                # if slot is available
+                print('Slot is Available!')
+                button2.click()
+
+                # wait until slot confirmation page is loaded
+                wait_page.until(EC.presence_of_element_located((By.XPATH, confirmation_path)))
+                print('Confirmation page is fully loaded')
+
+                # confirming slot
+                button3 = driver.find_element(By.XPATH, confirmation_path)
+                button3.click()
+                print('Slot booked succesfully!')
+                break
+
+            except NoSuchElementException:
+                print('Slot is not available')
+                # try other slot 
+                attempt += 1
+                attempt_path = re.sub(r'/tr\[\d+\]', f'/tr[{index + attempt}]', slot_path)
+                print('Trying path: ', attempt_path)
+        
+            except Exception as e:
+                print('Page took too long or encounter an error', e)
+
+    except TimeoutError:
+        print('Page took too long to load --> Refreshing...')
+        driver.refresh()
+
+    finally: 
+        driver.quit()
 
 
 
 try:
     # Step 5(final) : Set time of booking, usually 23:59
 
-    # thread.start_new_thread(main, (23,59,50,0000))
-    # thread.start_new_thread(main, (23,59,51,0000))
-    # thread.start_new_thread(main, (23,59,52,0000))
-    # thread.start_new_thread(main, (23,59,53,0000))
-    # thread.start_new_thread(main, (23,59,54,0000))
+    # thread.start_new_thread(main, (23,59,59,6000))
+    # thread.start_new_thread(main, (23,59,59,7000))
+    # thread.start_new_thread(main, (23,59,59,8000))
+    # thread.start_new_thread(main, (23,59,59,9000))
+    # thread.start_new_thread(main, (00,00,00,0000))
     thread.start_new_thread(main, (x.hour, x.minute, x.second, x.microsecond))
 
     ### start time open for tuning as login expected to delay
