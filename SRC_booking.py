@@ -6,6 +6,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException
 import re
 import _thread as thread
+import time
 
 # to keep browser opening after execution
 from selenium.webdriver.chrome.options import Options
@@ -32,12 +33,12 @@ password = ""
 ### Step 4 : Specify exact paths for the booking (retrieve using XPATH), UNCOMMENT the sports desired ###
 ### The slot path can be modify tr -> row, td -> col ###
 ### Badminton ###
-# booking_path = '//*[@id="top"]/div/section[2]/div/div/p/table/tbody/tr/td[2]/form/ul/li[4]/table[2]/tbody/tr[1]/td/input'
-# slot_path = '//*[@id="top"]/div/section[2]/div/div/p/table/tbody/tr/td[2]/form/table[2]/tbody/tr[8]/td[6]/input'
+booking_path = '//*[@id="top"]/div/section[2]/div/div/p/table/tbody/tr/td[2]/form/ul/li[4]/table[2]/tbody/tr[1]/td/input'
+slot_path = '//*[@id="top"]/div/section[2]/div/div/p/table/tbody/tr/td[2]/form/table[2]/tbody/tr[80]/td[9]/input'
 
 ### Gym ###
-booking_path = '//*[@id="top"]/div/section[2]/div/div/p/table/tbody/tr/td[2]/form/ul/li[4]/table[2]/tbody/tr[6]/td/input'
-slot_path = '//*[@id="top"]/div/section[2]/div/div/p/table/tbody/tr/td[2]/form/table[2]/tbody/tr[10]/td[2]/input'
+# booking_path = '//*[@id="top"]/div/section[2]/div/div/p/table/tbody/tr/td[2]/form/ul/li[4]/table[2]/tbody/tr[6]/td/input'
+# slot_path = '//*[@id="top"]/div/section[2]/div/div/p/table/tbody/tr/td[2]/form/table[2]/tbody/tr[10]/td[2]/input'
 
 
 ### Constants ###
@@ -72,15 +73,15 @@ def main(hr, min, sec, mili):
     login_button.click()
 
     # Click link when time is up 
-    while 1:
-        x = datetime.today()
+    # while 1:
+    #     x = datetime.today()
 
-        # time critical task to execute only when site refreshed
-        if x > z:
-            # accsessing the sport specific booking list
-            button1 = driver.find_element(By.XPATH, booking_path)
-            button1.click()
-            break
+    #     # time critical task to execute only when site refreshed
+    #     if x > z:
+    #         # accsessing the sport specific booking list
+    #         button1 = driver.find_element(By.XPATH, booking_path)
+    #         button1.click()
+    #         break
     
     ### Determine whether page is loaded
     # set a timeout value
@@ -98,6 +99,19 @@ def main(hr, min, sec, mili):
     attempt_path = slot_path
 
     try:
+        while 1:
+            x = datetime.today()
+
+            if x >= z:
+                print('time is up')
+                button1 = driver.find_element(By.XPATH, booking_path)
+                button1.click()
+                break
+            else:
+                print('Time is not up, Sleeping for ', (z-x).seconds, ' seconds')
+                time.sleep((z-x).microseconds)
+
+
         # wait for document.readyState to be 'complete'
         wait_page.until(EC.presence_of_element_located((By.XPATH, page_path)))
 
@@ -140,13 +154,13 @@ def main(hr, min, sec, mili):
 
 try:
     # Step 5(final) : Set time of booking, usually 23:59
+    # if desire to set time after midnight (0,0,0,0), need to set day + 1 on top
 
     # thread.start_new_thread(main, (23,59,59,6000))
     # thread.start_new_thread(main, (23,59,59,7000))
     # thread.start_new_thread(main, (23,59,59,8000))
-    # thread.start_new_thread(main, (23,59,59,9000))
-    # thread.start_new_thread(main, (00,00,00,0000))
-    thread.start_new_thread(main, (x.hour, x.minute, x.second, x.microsecond))
+    thread.start_new_thread(main, (23,59,59,9000))
+    # thread.start_new_thread(main, (x.hour, x.minute, x.second, x.microsecond))
 
     ### start time open for tuning as login expected to delay
 
