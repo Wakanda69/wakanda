@@ -1,5 +1,6 @@
 from datetime import datetime
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -34,7 +35,7 @@ password = ""
 ### The slot path can be modify tr -> row, td -> col ###
 ### Badminton ###
 booking_path = '//*[@id="top"]/div/section[2]/div/div/p/table/tbody/tr/td[2]/form/ul/li[4]/table[2]/tbody/tr[1]/td/input'
-slot_path = '//*[@id="top"]/div/section[2]/div/div/p/table/tbody/tr/td[2]/form/table[2]/tbody/tr[80]/td[9]/input'
+slot_path = '//*[@id="top"]/div/section[2]/div/div/p/table/tbody/tr/td[2]/form/table[2]/tbody/tr[19]/td[9]/input'
 
 ### Gym ###
 # booking_path = '//*[@id="top"]/div/section[2]/div/div/p/table/tbody/tr/td[2]/form/ul/li[4]/table[2]/tbody/tr[6]/td/input'
@@ -52,7 +53,10 @@ def main(hr, min, sec, mili):
     z = datetime(year, month, day, hr, min, sec, mili)
 
     # initialise webdriver 
-    driver = webdriver.Chrome()
+    ## fixed 26/8/2023, chromedriver version 116
+    service = Service(executable_path = 'C:/Users/teoji/Selenium/chromedriver/chromedriver.exe')
+    options = webdriver.ChromeOptions()
+    driver = webdriver.Chrome(service = service, options = options)
     driver.get(URL)
 
     # pass the basic authentication using src url (deprecated)
@@ -84,6 +88,7 @@ def main(hr, min, sec, mili):
     #         break
     
     ### Determine whether page is loaded
+
     # set a timeout value
     wait_page = WebDriverWait(driver, 10)
     # set attempt limit for alternative slots 
@@ -109,7 +114,8 @@ def main(hr, min, sec, mili):
                 break
             else:
                 print('Time is not up, Sleeping for ', (z-x).seconds, ' seconds')
-                time.sleep((z-x).microseconds)
+                print((z-x).seconds + (z-x).microseconds/100000)
+                time.sleep((z-x).seconds + (z-x).microseconds/100000)
 
 
         # wait for document.readyState to be 'complete'
@@ -143,11 +149,14 @@ def main(hr, min, sec, mili):
             except Exception as e:
                 print('Page took too long or encounter an error', e)
 
+        print('No slot available')
+
     except TimeoutError:
         print('Page took too long to load --> Refreshing...')
         driver.refresh()
 
     finally: 
+        print('quitting driver')
         driver.quit()
 
 
@@ -159,7 +168,8 @@ try:
     # thread.start_new_thread(main, (23,59,59,6000))
     # thread.start_new_thread(main, (23,59,59,7000))
     # thread.start_new_thread(main, (23,59,59,8000))
-    thread.start_new_thread(main, (23,59,59,9000))
+    # thread.start_new_thread(main, (23,59,59,9000))
+    thread.start_new_thread(main, (18,28,0,0))
     # thread.start_new_thread(main, (x.hour, x.minute, x.second, x.microsecond))
 
     ### start time open for tuning as login expected to delay
