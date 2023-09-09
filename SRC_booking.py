@@ -24,11 +24,11 @@ day = x.day
 # pip install selenium (deprecated) 
 
 ### Step 2 : Enter Username here (with @student) ###
-user_name = ""
+user_name = "c210075@student"
 
 
 ### Step 3 : Enter Password here ###
-password = ""
+password = "Jy@2015097"
 
 
 ### Step 4 : Specify exact paths for the booking (retrieve using XPATH), UNCOMMENT the sports desired ###
@@ -112,10 +112,12 @@ def main(hr, min, sec, mili):
                 button1 = driver.find_element(By.XPATH, booking_path)
                 button1.click()
                 break
-            else:
-                print('Time is not up, Sleeping for ', (z-x).seconds, ' seconds')
-                print((z-x).seconds + (z-x).microseconds/100000)
-                time.sleep((z-x).seconds + (z-x).microseconds/100000)
+
+            ### To do: determine the sleep function/ deploypy
+            # else:
+            #     print('Time is not up, Sleeping for ', (z-x).seconds, ' seconds')
+            #     print((z-x).seconds + (z-x).microseconds/100000)
+            #     time.sleep((z-x).seconds + (z-x).microseconds/100000)
 
 
         # wait for document.readyState to be 'complete'
@@ -167,9 +169,9 @@ try:
 
     # thread.start_new_thread(main, (23,59,59,6000))
     # thread.start_new_thread(main, (23,59,59,7000))
-    # thread.start_new_thread(main, (23,59,59,8000))
-    # thread.start_new_thread(main, (23,59,59,9000))
-    thread.start_new_thread(main, (18,28,0,0))
+    thread.start_new_thread(main, (23,59,59,8000))
+    thread.start_new_thread(main, (23,59,59,9000))
+    #thread.start_new_thread(main, (18,28,0,0))
     # thread.start_new_thread(main, (x.hour, x.minute, x.second, x.microsecond))
 
     ### start time open for tuning as login expected to delay
