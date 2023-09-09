@@ -38,7 +38,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="C:\Users\teoji\OneDrive - Nanyang Technological University\Documents\GitHub\selenium-scripts\botenv"
+VIRTUAL_ENV="C:\Users\teoji\OneDrive - Nanyang Technological University\Documents\GitHub\Star-bot\botenv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
