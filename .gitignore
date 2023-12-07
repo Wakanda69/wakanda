@@ -1,2 +1,5 @@
 # ignore tempCodeRunnerFile.py
 tempCodeRunnerFile.py
+
+__pycache__
+credentials.py
