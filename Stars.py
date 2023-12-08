@@ -6,6 +6,8 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException
 # import _thread as thread
 import threading
+import schedule
+import time
 from config import Stars_Config
 
 # to keep browser opening after execution
@@ -72,13 +74,7 @@ def main(hr, min, sec, mili):
         print('quitting driver')
         driver.quit()
 
-
-
-#######################
-#### Script Start #####
-#######################
-
-try:
+def start_threads():
     x = Stars_Config.BOOKING_TIME
     threads = []
 
@@ -93,6 +89,30 @@ try:
         t.join()
 
     print("All Threads are closed.")
+    global exit_flag
+    exit_flag = True
 
-except:
-    print("Error: unable to start thread")
+
+#######################
+#### Script Start #####
+#######################
+
+try:
+    # global variable to terminate script
+    exit_flag = False
+
+    # set the target time
+    target_time = Stars_Config.START_TIME
+
+    # schedule the start_threads function
+    schedule.every().day.at(str(target_time)).do(start_threads)
+
+    while not exit_flag:
+        schedule.run_pending()
+        time.sleep(1)
+
+    print("Exiting the script.")
+
+
+except Exception as e:
+    print(f'Error: {e}')
